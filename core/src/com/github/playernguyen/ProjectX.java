@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.github.playernguyen.entity.player.Player;
 
 public class ProjectX extends ApplicationAdapter {
     // This one use for drawing matrix in game (drawer)
@@ -18,6 +20,8 @@ public class ProjectX extends ApplicationAdapter {
     private Sprite backgroundSprite;
     private OrthographicCamera camera;
 
+    // Load player
+    private Player player;
 
     @Override
     public void create() {
@@ -33,6 +37,11 @@ public class ProjectX extends ApplicationAdapter {
         camera = new OrthographicCamera(vw, vh);
         camera.translate(vw/2, vh/2);
         camera.update();
+
+        player = new Player(this, new Vector2(0, vh/2));
+        player.load();
+
+
     }
 
     @Override
@@ -40,16 +49,29 @@ public class ProjectX extends ApplicationAdapter {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
 
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+        // Render background
         batch.begin();
         backgroundSprite.draw(batch);
         batch.end();
+
+        // Render player
+        player.render();
     }
 
     @Override
     public void dispose() {
         batch.dispose();
         backgroundTexture.dispose();
+        player.dispose();
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 }
